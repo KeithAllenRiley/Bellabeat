@@ -1,0 +1,220 @@
+##Cleaning Process
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.daily_activity`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.daily_calories`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.daily_intensities`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.daily_steps`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.heart_rate_sec`
+##14 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.hourly_calories`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.hourly_intensities`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.hourly_steps`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.min_cal_nar`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.min_cal_wide`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.min_intensities_nar`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.min_intensities_wide`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.min_mets_nar`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.min_sleep`
+##24 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.min_steps_nar`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.min_steps_wide`
+##33 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.sleep_day`
+##24 distinct users
+
+SELECT 
+  DISTINCT Id
+FROM 
+`bellabeat-373115.bellabeat.weight_loginfo`
+##8 distinct users
+
+SELECT COUNT(*) AS error_count
+FROM `bellabeat-373115.bellabeat.sleep_day`
+WHERE TotalTimeInBed < TotalMinutesAsleep
+##Determined accuracy of data in “sleep_day”, Count = 0
+
+SELECT `bellabeat-373115.bellabeat.hourly_calories`.Id, `bellabeat-373115.bellabeat.hourly_calories`.ActivityHour, Calories, TotalIntensity, AverageIntensity, StepTotal
+FROM `bellabeat-373115.bellabeat.hourly_calories`
+JOIN `bellabeat-373115.bellabeat.hourly_intensities`
+ON `bellabeat-373115.bellabeat.hourly_calories`.Id = `bellabeat-373115.bellabeat.hourly_intensities`.Id AND
+  `bellabeat-373115.bellabeat.hourly_calories`.ActivityHour = `bellabeat-373115.bellabeat.hourly_intensities`.ActivityHour
+JOIN `bellabeat-373115.bellabeat.hourly_steps`
+ON `bellabeat-373115.bellabeat.hourly_calories`.Id = `bellabeat-373115.bellabeat.hourly_steps`.Id AND
+  `bellabeat-373115.bellabeat.hourly_calories`.ActivityHour = `bellabeat-373115.bellabeat.hourly_steps`.ActivityHour
+ORDER BY `bellabeat-373115.bellabeat.hourly_calories`.Id, `bellabeat-373115.bellabeat.hourly_calories`.ActivityHour
+##Joined three hourly datasets into one. 
+
+SELECT  `bellabeat-373115.bellabeat.min_cal_nar`.Id, `bellabeat-373115.bellabeat.min_cal_nar`.ActivityMinute, Calories, Intensity, METs, Steps
+FROM `bellabeat-373115.bellabeat.min_cal_nar`
+JOIN `bellabeat-373115.bellabeat.min_intensities_nar`
+ON `bellabeat-373115.bellabeat.min_cal_nar`.Id = `bellabeat-373115.bellabeat.min_intensities_nar`.Id AND
+  `bellabeat-373115.bellabeat.min_cal_nar`.ActivityMinute = `bellabeat-373115.bellabeat.min_intensities_nar`.ActivityMinute
+JOIN `bellabeat-373115.bellabeat.min_mets_nar`
+ON `bellabeat-373115.bellabeat.min_cal_nar`.Id = `bellabeat-373115.bellabeat.min_mets_nar`.Id AND
+  `bellabeat-373115.bellabeat.min_cal_nar`.ActivityMinute = `bellabeat-373115.bellabeat.min_mets_nar`.ActivityMinute
+JOIN `bellabeat-373115.bellabeat.min_steps_nar`
+ON `bellabeat-373115.bellabeat.min_cal_nar`.Id = `bellabeat-373115.bellabeat.min_steps_nar`.Id AND
+  `bellabeat-373115.bellabeat.min_cal_nar`.ActivityMinute = `bellabeat-373115.bellabeat.min_steps_nar`.ActivityMinute
+ORDER BY `bellabeat-373115.bellabeat.min_cal_nar`.Id, `bellabeat-373115.bellabeat.min_cal_nar`.ActivityMinute;
+##Joined three minute datasets into one. 
+
+##Analysis
+SELECT 
+  COUNT(DISTINCT Id) AS users,
+  AVG(TotalSteps) AS avg_steps,
+  AVG(TotalDistance) AS avg_distance,
+  AVG(Calories) AS avg_calories
+FROM
+  `bellabeat-373115.bellabeat.daily_activity`
+##Calculated the average total steps, distance, and calories.
+
+SELECT 
+  DISTINCT ActivityDate AS ActivityDate,
+  ROUND(AVG(TotalSteps), 2) AS avg_steps,
+  ROUND(MAX(TotalSteps), 2) AS max_steps,
+  ROUND(MIN(TotalSteps), 2) AS min_steps,
+  ROUND(AVG(TotalDistance), 2) AS avg_distance,
+  ROUND(MAX(TotalDistance), 2) AS max_distance,
+  ROUND(MIN(TotalDistance), 2) AS min_distance,
+  ROUND(AVG(Calories), 2) AS avg_calories,
+  ROUND(MAX(Calories), 2) AS max_calories,
+  ROUND(MIN(Calories), 2) AS min_calories
+FROM
+  `bellabeat-373115.bellabeat.daily_activity`
+GROUP BY ActivityDate
+ORDER BY ActivityDate
+##Avg/Max/Min steps distance, and calories for a 31 day period. 
+
+SELECT 
+  ActivityDate,
+  SUM(SedentaryMinutes) AS sedentary,
+  SUM(LightlyActiveMinutes) AS light_active,
+  SUM(FairlyActiveMinutes) AS fairly_active,
+  SUM(VeryActiveMinutes) AS very_active
+FROM 
+  `bellabeat-373115.bellabeat.daily_activity`
+GROUP BY ActivityDate
+ORDER BY ActivityDate
+##Total time of each type of activity
+
+SELECT 
+  DISTINCT CAST(ActivityHour AS TIME) AS hour,
+  ROUND(AVG(Calories), 2) AS avg_calories,
+  MAX(Calories) AS max_calories,
+  MIN(Calories) AS min_calories,
+  ROUND(AVG(StepTotal), 2) AS avg_steps,
+  MAX(StepTotal) AS max_steps,
+  MIN(StepTotal) AS min_steps
+FROM
+  `bellabeat-373115.bellabeat.hourly_activity`
+GROUP BY hour
+ORDER BY hour
+##Hourly breakdown of activity
+
+SELECT 
+  DISTINCT CAST(ActivityHour AS TIME) AS hour,
+  ROUND(AVG(AverageIntensity), 2) AS avg_intensity,
+  ROUND(AVG(StepTotal), 2) AS avg_steps
+FROM
+  `bellabeat-373115.bellabeat.hourly_activity`
+GROUP BY hour
+ORDER BY hour
+##Average activity per hour
+
+SELECT
+  DISTINCT SleepDay,
+  ROUND(AVG(TotalMinutesAsleep), 2) AS sleep_time,
+  ROUND(AVG(TotalTimeInBed), 2) AS time_in_bed,
+  ROUND((AVG(TotalTimeInBed) - AVG(TotalMinutesAsleep)), 2) AS relaxing_in_bed
+FROM
+  `bellabeat-373115.bellabeat.sleep_day`
+GROUP BY SleepDay
+ORDER BY SleepDay
+##Time in bed awake
+
+SELECT
+  ActivityDate,
+  COUNT(*)
+FROM `bellabeat-373115.bellabeat.daily_activity`
+GROUP BY ActivityDate
+ORDER BY ActivityDate
+##User logins for the month
